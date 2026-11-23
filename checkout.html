@@ -84,8 +84,61 @@
     }
     .trust-row strong { display: block; color: var(--cyan); font-size: 0.68rem; text-transform: uppercase; margin-bottom: 0.2rem; }
   @media (max-width: 520px) { .trust-row { grid-template-columns: 1fr; } }
-    .btn-card {
+    .pay-methods {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 0.85rem;
+      margin: 1rem 0 0.75rem;
+      padding: 0.25rem 0;
+    }
+    .card-illus {
+      margin: 0;
+      flex: 1;
+      max-width: 168px;
+      text-align: center;
+    }
+    .card-illus svg {
+      width: 100%;
+      height: auto;
       display: block;
+      border-radius: 14px;
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+    }
+    .card-illus figcaption {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.45rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+    }
+    .card-illus--debit { transform: rotate(-4deg) translateY(4px); }
+    .card-illus--credit { transform: rotate(4deg); }
+    .brand-strip {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+    .brand-pill {
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 0.28rem 0.55rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+    }
+    .brand-pill--visa { color: #1a1f71; background: #e8ecff; border-color: #a5b4fc; }
+    .brand-pill--mc { color: #5a2d0c; background: #fff4e6; border-color: #fdba74; }
+    .btn-card {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.55rem;
       width: 100%;
       text-align: center;
       text-decoration: none;
@@ -101,6 +154,11 @@
       box-shadow: 0 12px 32px rgba(16, 185, 129, 0.25);
     }
     .btn-card:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-card-icon {
+      width: 1.35rem;
+      height: 1.35rem;
+      flex-shrink: 0;
+    }
     .warn {
       background: rgba(248, 113, 113, 0.1);
       border: 1px solid rgba(248, 113, 113, 0.35);
@@ -150,6 +208,16 @@
       font-size: 0.9rem;
     }
     #pay-screen[hidden], #success-screen[hidden] { display: none !important; }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
   </style>
 </head>
 <body>
@@ -172,7 +240,61 @@
         <p class="amount-value" id="valAmount"></p>
         <p class="network-badge" id="networkBadge"></p>
       </div>
-      <button type="button" class="btn-card" id="btnCardPay" disabled></button>
+      <div class="pay-methods" id="payMethods" aria-labelledby="payMethodsHeading">
+        <p class="visually-hidden" id="payMethodsHeading">Medios de pago aceptados</p>
+        <figure class="card-illus card-illus--debit">
+          <svg viewBox="0 0 320 200" role="img" aria-labelledby="cardDebitTitle">
+            <title id="cardDebitTitle">Tarjeta débito</title>
+            <defs>
+              <linearGradient id="gDebit" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#1d4ed8"/>
+                <stop offset="100%" stop-color="#0ea5e9"/>
+              </linearGradient>
+            </defs>
+            <rect width="320" height="200" rx="18" fill="url(#gDebit)"/>
+            <rect x="24" y="52" width="48" height="36" rx="6" fill="#fcd34d" opacity="0.95"/>
+            <rect x="24" y="118" width="120" height="12" rx="4" fill="rgba(255,255,255,0.35)"/>
+            <rect x="24" y="140" width="88" height="10" rx="4" fill="rgba(255,255,255,0.25)"/>
+            <text x="24" y="38" fill="#fff" font-size="14" font-family="system-ui,sans-serif" font-weight="700" opacity="0.9">DÉBITO</text>
+            <circle cx="270" cy="48" r="14" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+            <path d="M262 48h16M270 40v16" stroke="rgba(255,255,255,0.7)" stroke-width="2"/>
+          </svg>
+          <figcaption id="lblCardDebit"></figcaption>
+        </figure>
+        <figure class="card-illus card-illus--credit">
+          <svg viewBox="0 0 320 200" role="img" aria-labelledby="cardCreditTitle">
+            <title id="cardCreditTitle">Tarjeta de crédito</title>
+            <defs>
+              <linearGradient id="gCredit" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#4c1d95"/>
+                <stop offset="55%" stop-color="#7c3aed"/>
+                <stop offset="100%" stop-color="#db2777"/>
+              </linearGradient>
+            </defs>
+            <rect width="320" height="200" rx="18" fill="url(#gCredit)"/>
+            <rect x="24" y="52" width="48" height="36" rx="6" fill="#fcd34d" opacity="0.95"/>
+            <rect x="24" y="118" width="140" height="12" rx="4" fill="rgba(255,255,255,0.4)"/>
+            <rect x="24" y="140" width="72" height="10" rx="4" fill="rgba(255,255,255,0.28)"/>
+            <text x="24" y="38" fill="#fff" font-size="14" font-family="system-ui,sans-serif" font-weight="700" opacity="0.9">TDC</text>
+            <circle cx="248" cy="158" r="18" fill="#f97316" opacity="0.9"/>
+            <circle cx="268" cy="158" r="18" fill="#ef4444" opacity="0.85"/>
+          </svg>
+          <figcaption id="lblCardCredit"></figcaption>
+        </figure>
+      </div>
+      <div class="brand-strip" aria-hidden="true">
+        <span class="brand-pill brand-pill--visa">VISA</span>
+        <span class="brand-pill brand-pill--mc">Mastercard</span>
+        <span class="brand-pill" id="brandDebitPill">Débito</span>
+      </div>
+      <button type="button" class="btn-card" id="btnCardPay" disabled>
+        <svg class="btn-card-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <rect x="2" y="5" width="20" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M2 10h20" stroke="currentColor" stroke-width="1.5"/>
+          <rect x="5" y="14" width="6" height="2" rx="1" fill="currentColor"/>
+        </svg>
+        <span id="btnCardPayLabel"></span>
+      </button>
       <p class="pay-info" id="payInfoNote"></p>
       <div class="trust-row">
         <div><strong id="trust1Label"></strong><span id="trust1Text"></span></div>
@@ -218,6 +340,9 @@
         lblAmount: "Monto exacto",
         networkBadge: "Pago seguro en USD · PayGate",
         btnCard: "Pagar ahora con Tarjeta (TDC / Débito)",
+        lblCardDebit: "Tarjeta débito",
+        lblCardCredit: "Tarjeta de crédito (TDC)",
+        brandDebitPill: "Débito",
         payInfoNote: "Al pulsar el botón se abre la pasarela segura PayGate: ahí introduces el número de tarjeta, fecha y CVV. Después volverás aquí con la confirmación.",
         trust1Label: "Cifrado",
         trust1Text: "TLS · RSA/ECDSA",
@@ -246,6 +371,9 @@
         lblAmount: "Exact amount",
         networkBadge: "Secure USD payment · PayGate",
         btnCard: "Pay now with Card (Credit / Debit)",
+        lblCardDebit: "Debit card",
+        lblCardCredit: "Credit card",
+        brandDebitPill: "Debit",
         payInfoNote: "After you click the button, PayGate’s secure page opens where you enter card number, expiry and CVV. You’ll return here when payment is done.",
         trust1Label: "Encryption",
         trust1Text: "TLS · RSA/ECDSA",
@@ -339,7 +467,10 @@
       setText("lblEmail", t("lblEmail"));
       setText("lblAmount", t("lblAmount"));
       setText("networkBadge", t("networkBadge"));
-      setText("btnCardPay", t("btnCard"));
+      setText("btnCardPayLabel", t("btnCard"));
+      setText("lblCardDebit", t("lblCardDebit"));
+      setText("lblCardCredit", t("lblCardCredit"));
+      setText("brandDebitPill", t("brandDebitPill"));
       setText("payInfoNote", t("payInfoNote"));
       setText("trust1Label", t("trust1Label"));
       setText("trust1Text", t("trust1Text"));

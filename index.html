@@ -311,6 +311,53 @@
 
     .step-card h3 { margin: 0 0 0.5rem; font-size: 1.05rem; }
     .step-card p { margin: 0; color: var(--muted); font-size: 0.9rem; }
+    .step-pay-icons {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin: 0.75rem 0 0.5rem;
+    }
+    .step-pay-icons svg {
+      width: 72px;
+      height: 46px;
+      border-radius: 8px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+    }
+    .modal-pay-cards {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 0.65rem;
+      margin: 0.5rem 0 0.75rem;
+      padding: 0.75rem;
+      border-radius: 12px;
+      background: rgba(8, 16, 28, 0.65);
+      border: 1px solid var(--border);
+    }
+    .modal-pay-cards svg {
+      width: 100px;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+    .modal-pay-cards .mini-debit { transform: rotate(-3deg); }
+    .modal-pay-cards .mini-credit { transform: rotate(3deg); }
+    .modal-brand-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-bottom: 0.65rem;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    .modal-brand-row span {
+      padding: 0.2rem 0.45rem;
+      border-radius: 5px;
+      background: var(--card);
+      border: 1px solid var(--border);
+    }
 
     footer {
       border-top: 1px solid var(--border);
@@ -566,6 +613,10 @@
         </article>
         <article class="step-card">
           <div class="step-num">2</div>
+          <div class="step-pay-icons" aria-hidden="true">
+            <svg class="mini-debit" viewBox="0 0 320 200"><defs><linearGradient id="idxDebit" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#0ea5e9"/></linearGradient></defs><rect width="320" height="200" rx="18" fill="url(#idxDebit)"/><rect x="24" y="52" width="48" height="36" rx="6" fill="#fcd34d"/><text x="24" y="38" fill="#fff" font-size="14" font-family="system-ui" font-weight="700">DÉBITO</text></svg>
+            <svg class="mini-credit" viewBox="0 0 320 200"><defs><linearGradient id="idxCredit" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#4c1d95"/><stop offset="100%" stop-color="#db2777"/></linearGradient></defs><rect width="320" height="200" rx="18" fill="url(#idxCredit)"/><rect x="24" y="52" width="48" height="36" rx="6" fill="#fcd34d"/><text x="24" y="38" fill="#fff" font-size="14" font-family="system-ui" font-weight="700">TDC</text></svg>
+          </div>
           <h3 id="step2Title"></h3>
           <p id="step2Text"></p>
         </article>
@@ -630,6 +681,13 @@
             <input type="text" id="website" tabindex="-1" autocomplete="off">
           </div>
 
+          <div class="modal-pay-cards" aria-hidden="true">
+            <svg class="mini-debit" viewBox="0 0 320 200"><defs><linearGradient id="modDebit" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#0ea5e9"/></linearGradient></defs><rect width="320" height="200" rx="18" fill="url(#modDebit)"/><rect x="24" y="52" width="48" height="36" rx="6" fill="#fcd34d"/><rect x="24" y="118" width="120" height="12" rx="4" fill="rgba(255,255,255,0.35)"/><text x="24" y="36" fill="#fff" font-size="13" font-family="system-ui" font-weight="700">DÉBITO</text></svg>
+            <svg class="mini-credit" viewBox="0 0 320 200"><defs><linearGradient id="modCredit" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#4c1d95"/><stop offset="100%" stop-color="#db2777"/></linearGradient></defs><rect width="320" height="200" rx="18" fill="url(#modCredit)"/><rect x="24" y="52" width="48" height="36" rx="6" fill="#fcd34d"/><rect x="24" y="118" width="140" height="12" rx="4" fill="rgba(255,255,255,0.4)"/><text x="24" y="36" fill="#fff" font-size="13" font-family="system-ui" font-weight="700">TDC</text></svg>
+          </div>
+          <div class="modal-brand-row" aria-hidden="true">
+            <span>VISA</span><span>Mastercard</span><span id="modalBrandDebit">Débito</span>
+          </div>
           <button type="button" class="btn-action" id="btnContinuePay"></button>
         </section>
 
@@ -714,7 +772,7 @@
         step2Title: "Pago con tarjeta",
         step2Text: "En checkout.html pagas con tarjeta en PayGate. Sin wallet ni pasos extra.",
         step3Title: "Recepción por email",
-        step3Text: "Tras verificación on-chain, recibirás el certificado en menos de 6 horas.",
+        step3Text: "Tras confirmar el pago con tarjeta, recibirás el certificado por email en menos de 6 horas.",
         footerRights: "© Aixensoft. Certificados SSL/TLS para infraestructura empresarial.",
         footerPayLink: "Aixensoft Pay",
         modalTitle: "Datos del pedido",
@@ -732,6 +790,7 @@
         optServerExchange: "MailEnable / Exchange",
         optServerOther: "Otro",
         btnContinuePay: "Pagar con tarjeta — abrir checkout",
+        modalBrandDebit: "Débito",
         labelToken: "Moneda de pago",
         networkHint: "Red: Polygon PoS · Chain ID 137 (0x89)",
         optWalletTitle: "Pagar con Wallet Web3",
@@ -806,7 +865,7 @@
         step2Title: "Card payment",
         step2Text: "Pay by card on PayGate at checkout.html — no crypto wallet required.",
         step3Title: "Receive by email",
-        step3Text: "After on-chain verification, your certificate arrives in under 6 hours.",
+        step3Text: "After card payment is confirmed, your certificate arrives by email in under 6 hours.",
         footerRights: "© Aixensoft. SSL/TLS certificates for enterprise infrastructure.",
         footerPayLink: "Aixensoft Pay",
         modalTitle: "Order details",
@@ -824,6 +883,7 @@
         optServerExchange: "MailEnable / Exchange",
         optServerOther: "Other",
         btnContinuePay: "Pay by card — open checkout",
+        modalBrandDebit: "Debit",
         labelToken: "Payment token",
         networkHint: "Network: Polygon PoS · Chain ID 137 (0x89)",
         optWalletTitle: "Pay with Web3 Wallet",
@@ -949,6 +1009,7 @@
       setText("optServerExchange", pack.optServerExchange);
       setText("optServerOther", pack.optServerOther);
       setText("btnContinuePay", pack.btnContinuePay);
+      setText("modalBrandDebit", pack.modalBrandDebit);
       document.getElementById("modalClose").setAttribute("aria-label", pack.modalClose);
 
       document.getElementById("langEs").classList.toggle("active", currentLang === "es");
