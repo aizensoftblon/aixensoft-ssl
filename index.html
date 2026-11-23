@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://polygon-rpc.com https://rpc-mainnet.matic.quiknode.pro https://api.web3forms.com https://checkin.aixensoft.com; object-src 'none'; base-uri 'self';">
-  <meta name="description" content="Certificados SSL/TLS sin validación OV — Aixensoft. Pago USDC/USDT en Polygon. Entrega en menos de 6 horas.">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https://api.web3forms.com https://checkin.aixensoft.com; object-src 'none'; base-uri 'self';">
+  <meta name="description" content="Certificados SSL/TLS sin validación OV — Aixensoft. Pago con tarjeta. Entrega en menos de 6 horas.">
   <title>Aixensoft SSL / TLS</title>
   <style>
     :root {
@@ -631,38 +633,6 @@
           <button type="button" class="btn-action" id="btnContinuePay"></button>
         </section>
 
-        <section id="formStepPayment" hidden>
-          <p class="pay-meta" id="payAmountLine"></p>
-
-          <div class="field">
-            <span class="qty-label" id="labelToken"></span>
-            <div class="token-picker" role="group" id="tokenPicker">
-              <button type="button" class="token-opt active" data-token="USDC">USDC</button>
-              <button type="button" class="token-opt" data-token="USDT">USDT</button>
-            </div>
-            <p class="field-hint" id="networkHint"></p>
-          </div>
-
-          <div class="pay-panel">
-            <h3 id="optWalletTitle"></h3>
-            <p class="field-hint" id="optWalletDesc"></p>
-            <button type="button" class="btn-action" id="btnWalletPay"></button>
-          </div>
-
-          <div class="pay-panel">
-            <h3 id="optManualTitle"></h3>
-            <p class="pay-meta" id="manualWalletLine"></p>
-            <button type="button" class="btn-icon-copy" id="btnCopyWallet"></button>
-            <p class="pay-meta" id="manualAmountLine"></p>
-            <div class="field">
-              <label for="txHash" id="labelTxHash"></label>
-              <input type="text" id="txHash" maxlength="66" autocomplete="off" spellcheck="false" placeholder="0x...">
-            </div>
-            <button type="button" class="btn-action btn-secondary" id="btnVerifyTx"></button>
-          </div>
-
-          <button type="button" class="btn-action btn-secondary" id="btnBackDetails"></button>
-        </section>
 
         <div id="modalStatus" class="modal-status" role="status"></div>
       </form>
@@ -671,25 +641,8 @@
 
   <script>
     var POLYGON_ROUTER_CONFIG = {
-      merchantWallet: "0x80bD7c5b58344d869c01D9d9c0AD62e632DCE839",
       web3FormsKey: "33072a16-8226-4102-8f7e-f9b7048bee36",
-      keepAliveUrl: "https://checkin.aixensoft.com",
-      rpcUrls: [
-        "https://polygon-rpc.com",
-        "https://rpc-mainnet.matic.quiknode.pro"
-      ],
-      tokens: {
-        USDC: {
-          address: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
-          decimals: 6,
-          symbol: "USDC"
-        },
-        USDT: {
-          address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-          decimals: 6,
-          symbol: "USDT"
-        }
-      }
+      keepAliveUrl: "https://checkin.aixensoft.com"
     };
 
     var PLAN_CATALOG = {
@@ -700,15 +653,9 @@
 
     var DOMAIN_REGEX = /^(?:\*\.)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,24}$/;
     var EMAIL_REGEX = /^(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
-    var TX_HASH_REGEX = /^0x[a-fA-F0-9]{64}$/;
-    var WALLET_REGEX = /^0x[a-fA-F0-9]{40}$/;
-    var TRANSFER_TOPIC = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
-    var ERC20_TRANSFER_SELECTOR = "0xa9059cbb";
-    var POLYGON_CHAIN_ID = "0x89";
     var SUPPORT_EMAIL = "contact@aixensoft.com";
     var QTY_MIN = 1;
     var QTY_MAX = 25;
-    var PAY_COOLDOWN_MS = 5000;
     var KEEP_ALIVE_MS = 9 * 60 * 1000;
 
     var planQty = { basic: 1, secure_site: 1, secure_site_pro: 1 };
@@ -716,10 +663,6 @@
     var selectedPlan = null;
     var selectedQty = 1;
     var selectedTotal = 39;
-    var selectedToken = "USDC";
-    var payLockedUntil = 0;
-    var payCooldownTimer = null;
-    var orderSnapshot = null;
 
     var I18N = {
       es: {
@@ -731,7 +674,7 @@
         copyWalletOk: "Wallet copiada",
         heroBadge: "Entrega garantizada por email en menos de 6 horas · Cobertura 365 días",
         heroTitle: "Certificados SSL/TLS de Grado Empresarial para Servidores y Web",
-        heroSubtitle: "Sin trámites OV ni validación de organización. Pago único en Polygon PoS (USDC/USDT). Compatible con Windows Server / IIS, Exchange, Linux, Nginx, Apache y cPanel.",
+        heroSubtitle: "Sin trámites OV ni validación de organización. Pago único con tarjeta (Visa/Mastercard) vía checkout seguro. Compatible con Windows Server / IIS, Exchange, Linux, Nginx, Apache y cPanel.",
         plansHeading: "Planes y precios",
         qtyLabelTemplate: "Cantidad de dominios: {n}",
         plan1Name: "Basic",
@@ -768,8 +711,8 @@
         howHeading: "Cómo funciona",
         step1Title: "Elige plan y dominio",
         step1Text: "Usa el contador − / + y completa el correo y los dominios en el modal.",
-        step2Title: "Pago seguro en Polygon",
-        step2Text: "Paga el monto exacto en USDC o USDT en la red Polygon PoS (Chain 137) con wallet o transferencia manual.",
+        step2Title: "Pago con tarjeta",
+        step2Text: "En checkout.html pagas con tarjeta en PayGate. Sin wallet ni pasos extra.",
         step3Title: "Recepción por email",
         step3Text: "Tras verificación on-chain, recibirás el certificado en menos de 6 horas.",
         footerRights: "© Aixensoft. Certificados SSL/TLS para infraestructura empresarial.",
@@ -788,7 +731,7 @@
         optServerCpanel: "cPanel",
         optServerExchange: "MailEnable / Exchange",
         optServerOther: "Otro",
-        btnContinuePay: "Continuar al pago",
+        btnContinuePay: "Pagar con tarjeta — abrir checkout",
         labelToken: "Moneda de pago",
         networkHint: "Red: Polygon PoS · Chain ID 137 (0x89)",
         optWalletTitle: "Pagar con Wallet Web3",
@@ -823,7 +766,7 @@
         copyWalletOk: "Wallet copied",
         heroBadge: "Guaranteed email delivery in under 6 hours · 365-day coverage",
         heroTitle: "Enterprise-Grade SSL/TLS Certificates for Servers and Web",
-        heroSubtitle: "No OV paperwork or organization validation. One-time payment on Polygon PoS (USDC/USDT). Works with Windows Server / IIS, Exchange, Linux, Nginx, Apache, and cPanel.",
+        heroSubtitle: "No OV paperwork or organization validation. One-time card payment (Visa/Mastercard) via secure checkout. Works with Windows Server / IIS, Exchange, Linux, Nginx, Apache, and cPanel.",
         plansHeading: "Plans & pricing",
         qtyLabelTemplate: "Number of domains: {n}",
         plan1Name: "Basic",
@@ -860,8 +803,8 @@
         howHeading: "How it works",
         step1Title: "Choose plan & domain",
         step1Text: "Use − / + counter and fill email and domains in the modal.",
-        step2Title: "Secure Polygon payment",
-        step2Text: "Pay the exact amount in USDC or USDT on Polygon PoS (Chain 137) via wallet or manual transfer.",
+        step2Title: "Card payment",
+        step2Text: "Pay by card on PayGate at checkout.html — no crypto wallet required.",
         step3Title: "Receive by email",
         step3Text: "After on-chain verification, your certificate arrives in under 6 hours.",
         footerRights: "© Aixensoft. SSL/TLS certificates for enterprise infrastructure.",
@@ -880,7 +823,7 @@
         optServerCpanel: "cPanel",
         optServerExchange: "MailEnable / Exchange",
         optServerOther: "Other",
-        btnContinuePay: "Continue to payment",
+        btnContinuePay: "Pay by card — open checkout",
         labelToken: "Payment token",
         networkHint: "Network: Polygon PoS · Chain ID 137 (0x89)",
         optWalletTitle: "Pay with Web3 Wallet",
@@ -1006,16 +949,6 @@
       setText("optServerExchange", pack.optServerExchange);
       setText("optServerOther", pack.optServerOther);
       setText("btnContinuePay", pack.btnContinuePay);
-      setText("labelToken", pack.labelToken);
-      setText("networkHint", pack.networkHint);
-      setText("optWalletTitle", pack.optWalletTitle);
-      setText("optWalletDesc", pack.optWalletDesc);
-      setText("btnWalletPay", pack.btnWalletPay);
-      setText("optManualTitle", pack.optManualTitle);
-      setText("labelTxHash", pack.labelTxHash);
-      setText("btnVerifyTx", pack.btnVerifyTx);
-      setText("btnBackDetails", pack.btnBackDetails);
-      setText("btnCopyWallet", pack.copyWallet);
       document.getElementById("modalClose").setAttribute("aria-label", pack.modalClose);
 
       document.getElementById("langEs").classList.toggle("active", currentLang === "es");
@@ -1026,7 +959,6 @@
       updateAllPlanPricing();
       updateModalSummary();
       updateDomainLiveCount();
-      refreshPaymentPanel();
     }
 
     function hasDangerousDomainInput(raw) {
@@ -1087,47 +1019,42 @@
       box.textContent = message;
     }
 
-    function getMerchantWallet() {
-      return String(POLYGON_ROUTER_CONFIG.merchantWallet || "").trim();
+
+    function buildCheckoutUrl(order) {
+      var url = new URL("./checkout.html", window.location.href);
+      url.searchParams.set("plan", order.plan);
+      url.searchParams.set("qty", String(order.qty));
+      url.searchParams.set("amount", order.totalAmount.toFixed(2));
+      url.searchParams.set("domain", order.domains.join(","));
+      url.searchParams.set("email", order.email);
+      url.searchParams.set("lang", currentLang);
+      url.searchParams.set("rev", "card-only-v2");
+      return url.toString();
     }
 
-    function getTokenConfig() {
-      return POLYGON_ROUTER_CONFIG.tokens[selectedToken];
-    }
-
-    function amountToBaseUnits(totalUsd) {
-      return BigInt(totalUsd) * BigInt(1000000);
-    }
-
-    function padHex64(hex) {
-      var h = hex.replace(/^0x/, "").toLowerCase();
-      while (h.length < 64) h = "0" + h;
-      return h;
-    }
-
-    function encodeErc20Transfer(toWallet, amountBase) {
-      var to = padHex64(toWallet);
-      var amt = padHex64(amountBase.toString(16));
-      return ERC20_TRANSFER_SELECTOR + to + amt;
-    }
-
-    function addressFromTopic(topic) {
-      if (!topic || topic.length < 66) return "";
-      return ("0x" + topic.slice(26)).toLowerCase();
-    }
-
-    function refreshPaymentPanel() {
-      var token = getTokenConfig();
-      if (!token) return;
-      setText("payAmountLine", t("payAmountLine").replace("{total}", String(selectedTotal)).replace("{symbol}", token.symbol));
-      var wallet = getMerchantWallet();
-      var manualWallet = document.getElementById("manualWalletLine");
-      manualWallet.textContent = "";
-      var wLabel = document.createElement("strong");
-      wLabel.textContent = t("manualWallet") + ": ";
-      manualWallet.appendChild(wLabel);
-      manualWallet.appendChild(document.createTextNode(wallet));
-      setText("manualAmountLine", t("manualAmount") + ": " + String(selectedTotal) + " " + token.symbol);
+    function sendPreOrderWeb3Forms(order) {
+      var serverLine = order.serverType ? ("\nServidor: " + order.serverType) : "";
+      var body = [
+        "Plan: " + order.planName,
+        "Cantidad SSL: " + order.qty,
+        "Dominio(s): " + order.domains.join(", "),
+        "Email: " + order.email,
+        "Monto Total USD: " + order.totalAmount.toFixed(2),
+        "Estado: Iniciado en Checkout" + serverLine
+      ].join("\n");
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: POLYGON_ROUTER_CONFIG.web3FormsKey,
+          subject: "SSL — Pre-orden checkout",
+          from_name: "ssl.aixensoft.com",
+          email: order.email,
+          message: body
+        }),
+        keepalive: true,
+        credentials: "omit"
+      }).catch(function () {});
     }
 
     function collectOrderForm() {
@@ -1145,11 +1072,6 @@
 
       var hp = document.getElementById("website");
       if (hp && hp.value.trim() !== "") return null;
-
-      if (!WALLET_REGEX.test(getMerchantWallet())) {
-        showModalStatus("error", t("errWalletConfig"));
-        return null;
-      }
 
       var fields = collectOrderForm();
       if (!validateEmail(fields.email)) {
@@ -1174,8 +1096,7 @@
         totalAmount: selectedTotal,
         email: fields.email,
         domains: domainCheck.domains,
-        serverType: fields.serverType,
-        token: selectedToken
+        serverType: fields.serverType
       };
     }
 
@@ -1183,27 +1104,18 @@
       selectedPlan = plan;
       selectedQty = planQty[plan];
       selectedTotal = selectedQty * PLAN_CATALOG[plan].unitPrice;
-      selectedToken = "USDC";
-
-      document.querySelectorAll(".token-opt").forEach(function (btn) {
-        btn.classList.toggle("active", btn.getAttribute("data-token") === "USDC");
-      });
 
       document.getElementById("email").value = "";
       document.getElementById("domains").value = "";
       document.getElementById("serverType").value = "";
-      document.getElementById("txHash").value = "";
       setText("errEmail", "");
       setText("errDomains", "");
       hideModalStatus();
 
       document.getElementById("formStepDetails").hidden = false;
-      document.getElementById("formStepPayment").hidden = true;
-      orderSnapshot = null;
 
       updateModalSummary();
       updateDomainLiveCount();
-      refreshPaymentPanel();
 
       document.getElementById("modalBackdrop").classList.add("open");
       document.getElementById("modalBackdrop").setAttribute("aria-hidden", "false");
@@ -1215,207 +1127,6 @@
       document.getElementById("modalBackdrop").classList.remove("open");
       document.getElementById("modalBackdrop").setAttribute("aria-hidden", "true");
       document.body.classList.remove("modal-open");
-    }
-
-    function startPayCooldown(btn) {
-      payLockedUntil = Date.now() + PAY_COOLDOWN_MS;
-      btn.disabled = true;
-      if (payCooldownTimer) clearInterval(payCooldownTimer);
-      payCooldownTimer = setInterval(function () {
-        if (Date.now() >= payLockedUntil) {
-          clearInterval(payCooldownTimer);
-          payCooldownTimer = null;
-          btn.disabled = false;
-        }
-      }, 300);
-    }
-
-    function rpcCall(rpcUrl, method, params) {
-      return fetch(rpcUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: method, params: params }),
-        credentials: "omit"
-      }).then(function (res) {
-        if (!res.ok) throw new Error("rpc_http");
-        return res.json();
-      }).then(function (data) {
-        if (data.error) throw new Error("rpc_err");
-        return data.result;
-      });
-    }
-
-    function verifyPolygonTransaction(txHash, expectedAmount, tokenAddress) {
-      var merchant = getMerchantWallet().toLowerCase();
-      var token = tokenAddress.toLowerCase();
-      var expectedBase = amountToBaseUnits(expectedAmount);
-
-      function tryRpc(index) {
-        if (index >= POLYGON_ROUTER_CONFIG.rpcUrls.length) return Promise.resolve(false);
-        var rpc = POLYGON_ROUTER_CONFIG.rpcUrls[index];
-        return rpcCall(rpc, "eth_getTransactionReceipt", [txHash]).then(function (receipt) {
-          if (!receipt || receipt.status !== "0x1") return false;
-          var logs = receipt.logs || [];
-          for (var i = 0; i < logs.length; i++) {
-            var log = logs[i];
-            if (!log.address || log.address.toLowerCase() !== token) continue;
-            if (!log.topics || log.topics[0] !== TRANSFER_TOPIC) continue;
-            if (log.topics.length < 3) continue;
-            var toAddr = addressFromTopic(log.topics[2]);
-            if (toAddr !== merchant) continue;
-            var value = BigInt(log.data || "0x0");
-            if (value >= expectedBase) return true;
-          }
-          return false;
-        }).catch(function () {
-          return tryRpc(index + 1);
-        });
-      }
-
-      return tryRpc(0);
-    }
-
-    function submitOrderEmail(order, txHash) {
-      var tokenCfg = POLYGON_ROUTER_CONFIG.tokens[order.token];
-      var body = [
-        "Plan: " + order.planName,
-        "Cantidad dominios: " + order.qty,
-        "Monto total: " + order.totalAmount + " " + order.token,
-        "Email cliente: " + order.email,
-        "Dominios: " + order.domains.join(", "),
-        "Servidor: " + (order.serverType || "N/A"),
-        "Tx Polygon: https://polygonscan.com/tx/" + txHash
-      ].join("\n");
-
-      return fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({
-          access_key: POLYGON_ROUTER_CONFIG.web3FormsKey,
-          subject: "SSL Aixensoft — Pago Polygon verificado",
-          from_name: "ssl.aixensoft.com",
-          email: order.email,
-          message: body
-        }),
-        credentials: "omit"
-      }).then(function (res) {
-        return res.json().then(function (data) {
-          if (!res.ok || !data.success) throw new Error("web3forms_fail");
-          return true;
-        });
-      });
-    }
-
-    function onPaymentSuccess(order, txHash) {
-      var storageKey = "ssl_tx_notified_" + txHash.toLowerCase();
-      if (sessionStorage.getItem(storageKey) === "1") {
-        showModalStatus("success", t("statusEmailSent"));
-        return Promise.resolve();
-      }
-      return submitOrderEmail(order, txHash).then(function () {
-        sessionStorage.setItem(storageKey, "1");
-        showModalStatus("success", t("statusEmailSent"));
-      });
-    }
-
-    function processVerifiedPayment(txHash) {
-      if (!orderSnapshot) return;
-      showModalStatus("info", t("statusVerifying"));
-      var tokenCfg = POLYGON_ROUTER_CONFIG.tokens[orderSnapshot.token];
-      verifyPolygonTransaction(txHash, orderSnapshot.totalAmount, tokenCfg.address).then(function (ok) {
-        if (!ok) {
-          showModalStatus("error", t("errPayVerify"));
-          return;
-        }
-        onPaymentSuccess(orderSnapshot, txHash);
-      }).catch(function () {
-        showModalStatus("error", t("errPayVerify"));
-      });
-    }
-
-    function ensurePolygonChain(provider) {
-      return provider.request({ method: "eth_chainId" }).then(function (chainId) {
-        if (chainId === POLYGON_CHAIN_ID) return;
-        return provider.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: POLYGON_CHAIN_ID }]
-        }).catch(function (err) {
-          if (!err || err.code !== 4902) throw err;
-          return provider.request({
-            method: "wallet_addEthereumChain",
-            params: [{
-              chainId: POLYGON_CHAIN_ID,
-              chainName: "Polygon PoS",
-              nativeCurrency: { name: "MATIC", symbol: "MATIC", decimals: 18 },
-              rpcUrls: POLYGON_ROUTER_CONFIG.rpcUrls
-            }]
-          }).then(function () {
-            return provider.request({
-              method: "wallet_switchEthereumChain",
-              params: [{ chainId: POLYGON_CHAIN_ID }]
-            });
-          });
-        });
-      });
-    }
-
-    function payWithWallet() {
-      if (Date.now() < payLockedUntil) return;
-      if (!orderSnapshot) return;
-
-      if (!window.ethereum) {
-        showModalStatus("error", t("errNoWeb3"));
-        return;
-      }
-
-      var provider = window.ethereum;
-      var merchant = getMerchantWallet();
-      if (!WALLET_REGEX.test(merchant)) {
-        showModalStatus("error", t("errWalletConfig"));
-        return;
-      }
-
-      var tokenCfg = POLYGON_ROUTER_CONFIG.tokens[orderSnapshot.token];
-      var amountBase = amountToBaseUnits(orderSnapshot.totalAmount);
-      var data = encodeErc20Transfer(merchant, amountBase);
-      var btn = document.getElementById("btnWalletPay");
-
-      startPayCooldown(btn);
-      showModalStatus("info", t("statusWalletWait"));
-
-      provider.request({ method: "eth_requestAccounts" })
-        .then(function (accounts) {
-          if (!accounts || !accounts.length) throw new Error("no_accounts");
-          return ensurePolygonChain(provider).then(function () {
-            return provider.request({
-              method: "eth_sendTransaction",
-              params: [{
-                from: accounts[0],
-                to: tokenCfg.address,
-                data: data
-              }]
-            });
-          });
-        })
-        .then(function (txHash) {
-          if (!TX_HASH_REGEX.test(txHash)) throw new Error("bad_tx");
-          processVerifiedPayment(txHash);
-        })
-        .catch(function () {
-          showModalStatus("error", t("errPayVerify"));
-        });
-    }
-
-    function verifyManualTx() {
-      if (Date.now() < payLockedUntil) return;
-      if (!orderSnapshot) return;
-      var txHash = document.getElementById("txHash").value.trim();
-      if (!TX_HASH_REGEX.test(txHash)) {
-        showModalStatus("error", t("errTxHash"));
-        return;
-      }
-      startPayCooldown(document.getElementById("btnVerifyTx"));
-      processVerifiedPayment(txHash);
     }
 
     function pingCheckinGateway() {
@@ -1435,18 +1146,6 @@
           btn.textContent = t("copyOk");
           setTimeout(function () { btn.textContent = prev; }, 2000);
         }).catch(function () { window.alert(t("copyFail")); });
-      }
-    });
-
-    document.getElementById("btnCopyWallet").addEventListener("click", function () {
-      var wallet = getMerchantWallet();
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(wallet).then(function () {
-          var btn = document.getElementById("btnCopyWallet");
-          var prev = btn.textContent;
-          btn.textContent = t("copyWalletOk");
-          setTimeout(function () { btn.textContent = prev; }, 2000);
-        });
       }
     });
 
@@ -1487,35 +1186,15 @@
       if (ev.key === "Escape") closeModal();
     });
 
-    document.querySelectorAll(".token-opt").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        selectedToken = btn.getAttribute("data-token");
-        document.querySelectorAll(".token-opt").forEach(function (b) {
-          b.classList.toggle("active", b === btn);
-        });
-        refreshPaymentPanel();
-        if (orderSnapshot) orderSnapshot.token = selectedToken;
-      });
-    });
-
     document.getElementById("btnContinuePay").addEventListener("click", function () {
       var order = validateOrderForm();
       if (!order) return;
-      orderSnapshot = order;
-      document.getElementById("formStepDetails").hidden = true;
-      document.getElementById("formStepPayment").hidden = false;
-      refreshPaymentPanel();
+      sendPreOrderWeb3Forms(order);
+      var checkoutUrl = buildCheckoutUrl(order);
+      window.open(checkoutUrl, "_blank", "noopener,noreferrer");
       hideModalStatus();
+      closeModal();
     });
-
-    document.getElementById("btnBackDetails").addEventListener("click", function () {
-      document.getElementById("formStepPayment").hidden = true;
-      document.getElementById("formStepDetails").hidden = false;
-      hideModalStatus();
-    });
-
-    document.getElementById("btnWalletPay").addEventListener("click", payWithWallet);
-    document.getElementById("btnVerifyTx").addEventListener("click", verifyManualTx);
 
     document.getElementById("orderForm").addEventListener("submit", function (ev) {
       ev.preventDefault();

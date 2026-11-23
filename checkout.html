@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' http://127.0.0.1:8766 http://localhost:8766 https://api.paygate.to https://api.web3forms.com https://aixensoft-pay.onrender.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self';">
+  <title>Aixensoft SSL / TLS Checkout</title>
+  <style>
+    :root {
+      --bg: #0a0c10;
+      --surface: #12151c;
+      --surface-2: #1a1f2b;
+      --border: #2a3142;
+      --text: #e8ecf4;
+      --muted: #8b95a8;
+      --emerald: #10b981;
+      --cyan: #22d3ee;
+      --danger: #f87171;
+      --radius: 16px;
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: radial-gradient(ellipse 120% 80% at 50% -20%, #152238 0%, var(--bg) 55%);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    .wrap { max-width: 480px; margin: 0 auto; padding: 1.5rem 1.25rem 3rem; }
+    header { text-align: center; margin-bottom: 1.5rem; }
+    .brand { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--cyan); }
+    h1 { font-size: 1.35rem; font-weight: 600; margin-top: 0.35rem; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1rem;
+    }
+    .summary-title { font-size: 1rem; margin-bottom: 1rem; text-align: center; }
+    .summary-row { margin-bottom: 0.85rem; }
+    .field-label { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.06em; }
+    .pay-info {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      margin: 1rem 0 0;
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .summary-value { font-size: 0.95rem; word-break: break-word; }
+    .amount-block {
+      text-align: center;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin: 1rem 0;
+    }
+    .amount-value {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--emerald), var(--cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .network-badge { font-size: 0.78rem; color: var(--muted); margin-top: 0.5rem; }
+    .network-badge strong { color: var(--cyan); }
+    .trust-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 1rem;
+    }
+    .trust-row strong { display: block; color: var(--cyan); font-size: 0.68rem; text-transform: uppercase; margin-bottom: 0.2rem; }
+  @media (max-width: 520px) { .trust-row { grid-template-columns: 1fr; } }
+    .btn-card {
+      display: block;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      background: linear-gradient(135deg, #059669, #0891b2);
+      color: #fff;
+      font-weight: 700;
+      padding: 0.95rem 1rem;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+      box-shadow: 0 12px 32px rgba(16, 185, 129, 0.25);
+    }
+    .btn-card:disabled { opacity: 0.45; cursor: not-allowed; }
+    .warn {
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.35);
+      color: #fecaca;
+      font-size: 0.82rem;
+      padding: 0.75rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .warn.visible { display: block; }
+    .status-msg {
+      font-size: 0.85rem;
+      padding: 0.75rem;
+      border-radius: 10px;
+      margin-top: 0.75rem;
+      display: none;
+    }
+    .status-msg.visible { display: block; }
+    .status-msg.info { background: rgba(34, 211, 238, 0.12); border: 1px solid rgba(34, 211, 238, 0.35); color: #bae6fd; }
+    .status-msg.error { background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.35); color: #fecaca; }
+    .status-msg.success { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.35); color: #a7f3d0; }
+    .success-wrap { text-align: center; display: none; }
+    .success-wrap.visible { display: block; }
+    .check-circle {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      background: rgba(52, 211, 153, 0.2);
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #34d399;
+      font-size: 1.5rem;
+    }
+    .btn-home {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.75rem 1.25rem;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    #pay-screen[hidden], #success-screen[hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand" id="headerBrand"></div>
+      <h1 id="headerTitle"></h1>
+    </header>
+
+    <div id="orderError" class="warn" role="alert"></div>
+
+    <section id="pay-screen" class="card">
+      <h2 class="summary-title" id="summaryTitle"></h2>
+      <div class="summary-row"><p class="field-label" id="lblPlan"></p><p class="summary-value" id="valPlan"></p></div>
+      <div class="summary-row"><p class="field-label" id="lblQty"></p><p class="summary-value" id="valQty"></p></div>
+      <div class="summary-row"><p class="field-label" id="lblDomain"></p><p class="summary-value" id="valDomain"></p></div>
+      <div class="summary-row"><p class="field-label" id="lblEmail"></p><p class="summary-value" id="valEmail"></p></div>
+      <div class="amount-block">
+        <p class="field-label" id="lblAmount"></p>
+        <p class="amount-value" id="valAmount"></p>
+        <p class="network-badge" id="networkBadge"></p>
+      </div>
+      <button type="button" class="btn-card" id="btnCardPay" disabled></button>
+      <p class="pay-info" id="payInfoNote"></p>
+      <div class="trust-row">
+        <div><strong id="trust1Label"></strong><span id="trust1Text"></span></div>
+        <div><strong id="trust2Label"></strong><span id="trust2Text"></span></div>
+        <div><strong id="trust3Label"></strong><span id="trust3Text"></span></div>
+      </div>
+      <div id="statusBox" class="status-msg" role="status"></div>
+    </section>
+
+    <section id="success-screen" class="card success-wrap" hidden>
+      <div class="check-circle">✓</div>
+      <h2 id="successTitle"></h2>
+      <p id="successText" style="color: var(--muted); margin-top: 0.5rem;"></p>
+      <a class="btn-home" id="btnHome" href="./index.html"></a>
+    </section>
+  </div>
+
+  <script>
+    var MERCHANT_WALLET = "0x80bD7c5b58344d869c01D9d9c0AD62e632DCE839";
+    var WEB3FORMS_KEY = "33072a16-8226-4102-8f7e-f9b7048bee36";
+    var PAYGATE_BRIDGE = (function () {
+      var h = window.location.hostname;
+      if (h === "127.0.0.1" || h === "localhost") {
+        return "http://127.0.0.1:8766/public/ssl/paygate-link";
+      }
+      return "https://aixensoft-pay.onrender.com/public/ssl/paygate-link";
+    })();
+    var PAYGATE_API = "https://api.paygate.to/control/wallet.php";
+    var PAYGATE_CHECKOUT = "https://checkout.paygate.to/process-payment.php";
+    var EMAIL_REGEX = /^(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
+
+    var PLAN_PRICES = { basic: 39, secure_site: 180, secure_site_pro: 290 };
+
+    var I18N = {
+      es: {
+        headerBrand: "Aixensoft SSL / TLS",
+        headerTitle: "Checkout seguro",
+        summaryTitle: "Resumen del pedido",
+        lblPlan: "Plan",
+        lblQty: "Cantidad SSL",
+        lblDomain: "Dominio(s)",
+        lblEmail: "Correo de entrega",
+        lblAmount: "Monto exacto",
+        networkBadge: "Pago seguro en USD · PayGate",
+        btnCard: "Pagar ahora con Tarjeta (TDC / Débito)",
+        payInfoNote: "Al pulsar el botón se abre la pasarela segura PayGate: ahí introduces el número de tarjeta, fecha y CVV. Después volverás aquí con la confirmación.",
+        trust1Label: "Cifrado",
+        trust1Text: "TLS · RSA/ECDSA",
+        trust2Label: "Entrega",
+        trust2Text: "< 6 horas",
+        trust3Label: "Soporte",
+        trust3Text: "contact@aixensoft.com",
+        errInvalidOrder: "Orden inválida o parámetros manipulados. Contacta a soporte.",
+        statusCard: "Preparando pasarela PayGate…",
+        errPayCard: "No se pudo abrir PayGate. Revisa tu conexión, prueba otra red o DNS (8.8.8.8) y escribe a contact@aixensoft.com si persiste.",
+        successTitle: "Pago confirmado",
+        successText: "Pedido registrado. Recibirás tu certificado por email en menos de 6 horas.",
+        btnHome: "Volver a inicio",
+        planBasic: "Basic",
+        planSecure: "Secure Site",
+        planPro: "Secure Site Pro"
+      },
+      en: {
+        headerBrand: "Aixensoft SSL / TLS",
+        headerTitle: "Secure checkout",
+        summaryTitle: "Order summary",
+        lblPlan: "Plan",
+        lblQty: "SSL quantity",
+        lblDomain: "Domain(s)",
+        lblEmail: "Delivery email",
+        lblAmount: "Exact amount",
+        networkBadge: "Secure USD payment · PayGate",
+        btnCard: "Pay now with Card (Credit / Debit)",
+        payInfoNote: "After you click the button, PayGate’s secure page opens where you enter card number, expiry and CVV. You’ll return here when payment is done.",
+        trust1Label: "Encryption",
+        trust1Text: "TLS · RSA/ECDSA",
+        trust2Label: "Delivery",
+        trust2Text: "< 6 hours",
+        trust3Label: "Support",
+        trust3Text: "contact@aixensoft.com",
+        errInvalidOrder: "Invalid order or tampered parameters. Contact support.",
+        statusCard: "Preparing PayGate checkout…",
+        errPayCard: "Could not open PayGate. Check your connection, try another network or DNS (8.8.8.8), or email contact@aixensoft.com.",
+        successTitle: "Payment confirmed",
+        successText: "Order registered. Certificate delivery by email in under 6 hours.",
+        btnHome: "Back to home",
+        planBasic: "Basic",
+        planSecure: "Secure Site",
+        planPro: "Secure Site Pro"
+      }
+    };
+
+    var lang = "es";
+    var order = null;
+    var orderValid = false;
+
+    function t(k) { return (I18N[lang] && I18N[lang][k]) || I18N.es[k] || k; }
+
+    function setText(id, text) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = text;
+    }
+
+    function planName(key) {
+      if (key === "basic") return t("planBasic");
+      if (key === "secure_site") return t("planSecure");
+      return t("planPro");
+    }
+
+    function parsePaygateAddress(body) {
+      var trimmed = (body || "").trim();
+      try {
+        var json = JSON.parse(trimmed);
+        if (json.address_in) return String(json.address_in);
+      } catch (e) { /* not json */ }
+      if (/^0x[a-fA-F0-9]{40}$/.test(trimmed)) return trimmed;
+      return null;
+    }
+
+    function validateParams(p) {
+      var plan = String(p.get("plan") || "").trim();
+      if (!PLAN_PRICES.hasOwnProperty(plan)) return null;
+      var qty = parseInt(p.get("qty"), 10);
+      if (!Number.isFinite(qty) || qty < 1 || qty > 25) return null;
+      var amountRaw = String(p.get("amount") || "").trim();
+      var amountNum = parseFloat(amountRaw);
+      if (!Number.isFinite(amountNum) || amountNum <= 0) return null;
+      var amountFixed = amountNum.toFixed(2);
+      var expected = (qty * PLAN_PRICES[plan]).toFixed(2);
+      if (amountFixed !== expected) return null;
+      var domain = String(p.get("domain") || "").trim();
+      if (!domain || domain.length > 2048) return null;
+      var email = String(p.get("email") || "").trim();
+      if (!email || email.length > 254 || !EMAIL_REGEX.test(email)) return null;
+      var lg = String(p.get("lang") || "es").toLowerCase();
+      if (lg !== "en") lg = "es";
+      return {
+        plan: plan,
+        planName: planNameForLang(plan, lg),
+        qty: qty,
+        amount: amountFixed,
+        amountNum: parseFloat(amountFixed),
+        domain: domain,
+        email: email,
+        lang: lg,
+        status: String(p.get("status") || "").toLowerCase()
+      };
+    }
+
+    function planNameForLang(plan, lg) {
+      var pack = I18N[lg] || I18N.es;
+      if (plan === "basic") return pack.planBasic;
+      if (plan === "secure_site") return pack.planSecure;
+      return pack.planPro;
+    }
+
+    function applyI18n() {
+      setText("headerBrand", t("headerBrand"));
+      setText("headerTitle", t("headerTitle"));
+      setText("summaryTitle", t("summaryTitle"));
+      setText("lblPlan", t("lblPlan"));
+      setText("lblQty", t("lblQty"));
+      setText("lblDomain", t("lblDomain"));
+      setText("lblEmail", t("lblEmail"));
+      setText("lblAmount", t("lblAmount"));
+      setText("networkBadge", t("networkBadge"));
+      setText("btnCardPay", t("btnCard"));
+      setText("payInfoNote", t("payInfoNote"));
+      setText("trust1Label", t("trust1Label"));
+      setText("trust1Text", t("trust1Text"));
+      setText("trust2Label", t("trust2Label"));
+      setText("trust2Text", t("trust2Text"));
+      setText("trust3Label", t("trust3Label"));
+      setText("trust3Text", t("trust3Text"));
+      setText("successTitle", t("successTitle"));
+      setText("successText", t("successText"));
+      setText("btnHome", t("btnHome"));
+    }
+
+    function showInvalid(message) {
+      orderValid = false;
+      var warn = document.getElementById("orderError");
+      warn.textContent = message;
+      warn.classList.add("visible");
+      document.getElementById("btnCardPay").disabled = true;
+    }
+
+    function fillSummary() {
+      if (!order) return;
+      setText("valPlan", order.planName);
+      setText("valQty", String(order.qty));
+      setText("valDomain", order.domain);
+      setText("valEmail", order.email);
+      setText("valAmount", "$" + order.amount + " USD");
+    }
+
+    function buildCallbackUrl() {
+      var origin = (window.location.protocol === "http:" || window.location.protocol === "https:")
+        ? window.location.origin
+        : "https://ssl.aixensoft.com";
+      var u = new URL(origin + "/checkout.html");
+      u.searchParams.set("status", "paid");
+      u.searchParams.set("plan", order.plan);
+      u.searchParams.set("qty", String(order.qty));
+      u.searchParams.set("amount", order.amount);
+      u.searchParams.set("domain", order.domain);
+      u.searchParams.set("email", order.email);
+      u.searchParams.set("lang", lang);
+      u.searchParams.set("ref", Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10));
+      return u.toString();
+    }
+
+    function hideStatus() {
+      var box = document.getElementById("statusBox");
+      box.className = "status-msg";
+      box.textContent = "";
+    }
+
+    function showStatus(kind, msg) {
+      var box = document.getElementById("statusBox");
+      box.className = "status-msg visible " + kind;
+      box.textContent = msg;
+    }
+
+    function notifyWeb3Forms(extra) {
+      if (!order || !orderValid) return Promise.reject();
+      var key = "ssl_checkout_notify_" + order.email + "_" + order.amount + "_" + (extra || "ok");
+      if (sessionStorage.getItem(key) === "1") return Promise.resolve();
+      var lines = [
+        "Plan: " + order.planName,
+        "Cantidad SSL: " + order.qty,
+        "Dominio(s): " + order.domain,
+        "Email: " + order.email,
+        "Monto USD: " + order.amount,
+        "Estado: Pago confirmado",
+        extra || ""
+      ].filter(Boolean).join("\n");
+      return fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: "SSL Aixensoft — Pago confirmado",
+          from_name: "ssl-checkout",
+          email: order.email,
+          message: lines
+        }),
+        credentials: "omit"
+      }).then(function (res) {
+        return res.json().then(function (data) {
+          if (!res.ok || !data.success) throw new Error("fail");
+          sessionStorage.setItem(key, "1");
+        });
+      });
+    }
+
+    function showSuccess() {
+      document.getElementById("pay-screen").hidden = true;
+      var s = document.getElementById("success-screen");
+      s.hidden = false;
+      s.classList.add("visible");
+    }
+
+    function redirectPaygateCheckout(addressIn) {
+      var q = PAYGATE_CHECKOUT + "?address=" + addressIn +
+        "&amount=" + encodeURIComponent(order.amount) +
+        "&provider=hosted" +
+        "&currency=USD" +
+        "&email=" + encodeURIComponent(order.email);
+      window.location.assign(q);
+    }
+
+    function payCardViaBridge() {
+      var q = new URLSearchParams({
+        amount: order.amount,
+        email: order.email,
+        callback: buildCallbackUrl()
+      });
+      return fetch(PAYGATE_BRIDGE + "?" + q.toString(), {
+        method: "GET",
+        credentials: "omit",
+        headers: { Accept: "application/json" }
+      }).then(function (res) {
+        if (!res.ok) throw new Error("bridge_http");
+        return res.json();
+      }).then(function (data) {
+        if (!data || !data.checkout_url) throw new Error("bridge_url");
+        window.location.assign(data.checkout_url);
+      });
+    }
+
+    function payCardViaPaygateApi() {
+      var walletUrl = PAYGATE_API + "?address=" + encodeURIComponent(MERCHANT_WALLET) +
+        "&callback=" + encodeURIComponent(buildCallbackUrl());
+      return fetch(walletUrl, { method: "GET", credentials: "omit", mode: "cors" }).then(function (res) {
+        if (!res.ok) throw new Error("paygate_http");
+        return res.text();
+      }).then(function (text) {
+        var addressIn = parsePaygateAddress(text);
+        if (!addressIn) throw new Error("paygate_addr");
+        redirectPaygateCheckout(addressIn);
+      });
+    }
+
+    function payCard() {
+      if (!orderValid || !order) return;
+      var btn = document.getElementById("btnCardPay");
+      btn.disabled = true;
+      showStatus("info", t("statusCard"));
+      payCardViaBridge().catch(function () {
+        return payCardViaPaygateApi();
+      }).catch(function () {
+        btn.disabled = false;
+        showStatus("error", t("errPayCard"));
+      });
+    }
+
+    function init() {
+      var parsed = validateParams(new URLSearchParams(window.location.search));
+      if (!parsed) {
+        lang = (new URLSearchParams(window.location.search).get("lang") === "en") ? "en" : "es";
+        applyI18n();
+        showInvalid(t("errInvalidOrder"));
+        return;
+      }
+      order = parsed;
+      lang = order.lang;
+      document.documentElement.lang = lang;
+      orderValid = true;
+      hideStatus();
+      applyI18n();
+      fillSummary();
+      document.getElementById("btnCardPay").disabled = false;
+
+      if (order.status === "paid") {
+        notifyWeb3Forms("Retorno PayGate status=paid").then(showSuccess).catch(function () {
+          showSuccess();
+        });
+      }
+    }
+
+    document.getElementById("btnCardPay").addEventListener("click", payCard);
+
+    init();
+  </script>
+</body>
+</html>
