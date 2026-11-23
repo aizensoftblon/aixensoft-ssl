@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self';">
+  <meta name="description" content="Certificados SSL/TLS de grado empresarial — Aixensoft. Entrega por email en menos de 6 horas.">
+  <title>Aixensoft SSL / TLS</title>
+  <style>
+    :root {
+      --bg: #060b14;
+      --card: #0d1524;
+      --border: #1e2d47;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --emerald: #10b981;
+      --cyan: #38bdf8;
+      --emerald-dim: rgba(16, 185, 129, 0.15);
+      --cyan-dim: rgba(56, 189, 248, 0.12);
+      --danger: #f87171;
+      --radius: 12px;
+      --font: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--font);
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.08), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 50%, rgba(16, 185, 129, 0.06), transparent);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    body.modal-open { overflow: hidden; }
+
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 1.25rem; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(6, 11, 20, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.85rem 0;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .brand span { color: var(--emerald); }
+
+    .lang-switch {
+      display: flex;
+      gap: 0.35rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.2rem;
+    }
+
+    .lang-switch button {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .lang-switch button.active {
+      background: var(--emerald-dim);
+      color: var(--emerald);
+    }
+
+    .lang-switch button:focus-visible {
+      outline: 2px solid var(--cyan);
+      outline-offset: 2px;
+    }
+
+    .support-strip {
+      background: linear-gradient(90deg, var(--card) 0%, rgba(13, 21, 36, 0.6) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 0;
+      font-size: 0.9rem;
+    }
+
+    .support-strip-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      color: var(--muted);
+    }
+
+    .support-strip a { font-weight: 600; }
+
+    .btn-copy {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--cyan);
+      padding: 0.35rem 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .btn-copy:hover { border-color: var(--cyan); background: var(--cyan-dim); }
+    .btn-copy:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+    .hero {
+      padding: 3.5rem 0 2.5rem;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--emerald);
+      background: var(--emerald-dim);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.75rem, 4vw, 2.65rem);
+      line-height: 1.2;
+      margin: 0 0 1rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .hero .subtitle {
+      max-width: 720px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .plans-section { padding: 2rem 0 3rem; }
+
+    .plans-section h2,
+    .how-section h2 {
+      text-align: center;
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      color: var(--text);
+    }
+
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+
+    .plan-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .plan-card:hover { border-color: rgba(56, 189, 248, 0.4); }
+
+    .plan-card.featured {
+      border-color: var(--emerald);
+      box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.25), 0 12px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    .plan-tag {
+      position: absolute;
+      top: -0.65rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--emerald);
+      color: #042f1e;
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 0.25rem 0.85rem;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .plan-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 0.5rem 0 0.25rem;
+    }
+
+    .plan-price {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--cyan);
+      margin: 0.5rem 0;
+    }
+
+    .plan-price small {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--muted);
+    }
+
+    .plan-features {
+      list-style: none;
+      padding: 0;
+      margin: 1.25rem 0;
+      flex: 1;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .plan-features li {
+      padding: 0.4rem 0;
+      padding-left: 1.35rem;
+      position: relative;
+    }
+
+    .plan-features li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.65rem;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--emerald);
+    }
+
+    .btn-plan {
+      width: 100%;
+      border: none;
+      background: linear-gradient(135deg, var(--emerald) 0%, #059669 100%);
+      color: #042f1e;
+      font-weight: 700;
+      padding: 0.85rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: transform 0.15s, opacity 0.2s;
+    }
+
+    .btn-plan:hover { transform: translateY(-1px); opacity: 0.95; }
+    .btn-plan:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+    .plan-card.featured .btn-plan {
+      background: linear-gradient(135deg, var(--cyan) 0%, #0ea5e9 100%);
+      color: #0c1929;
+    }
+
+    .how-section {
+      padding: 3rem 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .step-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 8px;
+      background: var(--cyan-dim);
+      color: var(--cyan);
+      font-weight: 800;
+      font-size: 0.9rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .step-card h3 {
+      margin: 0 0 0.5rem;
+      font-size: 1.05rem;
+    }
+
+    .step-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 0 2.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    footer .domain { color: var(--emerald); font-weight: 600; }
+
+    .footer-links {
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(2, 6, 14, 0.78);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: 100%;
+      max-width: 480px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    .modal-plan-label {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 0.25rem;
+    }
+
+    .btn-close {
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--muted);
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.25rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .btn-close:hover { color: var(--text); border-color: var(--cyan); }
+    .btn-close:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+    .field { margin-bottom: 1rem; }
+
+    .field label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px var(--cyan-dim);
+    }
+
+    .field-hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+    }
+
+    .field-error {
+      color: var(--danger);
+      font-size: 0.8rem;
+      margin-top: 0.35rem;
+      min-height: 1.1em;
+    }
+
+    .hp-field {
+      position: absolute;
+      left: -9999px;
+      opacity: 0;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn-pay {
+      width: 100%;
+      border: none;
+      background: linear-gradient(135deg, var(--emerald) 0%, #059669 100%);
+      color: #042f1e;
+      font-weight: 800;
+      padding: 0.95rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .btn-pay:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-pay:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+
+    .btn-mailto {
+      width: 100%;
+      text-align: center;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--cyan);
+      font-weight: 600;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    .btn-mailto:hover { border-color: var(--cyan); background: var(--cyan-dim); }
+    .btn-mailto:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+    .modal-status {
+      margin-top: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      display: none;
+    }
+
+    .modal-status.visible { display: block; }
+    .modal-status.error {
+      background: rgba(248, 113, 113, 0.12);
+      border: 1px solid rgba(248, 113, 113, 0.35);
+      color: #fecaca;
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding-top: 2rem; }
+      .modal { padding: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <div class="brand">Aixensoft <span>SSL / TLS</span></div>
+      <div class="lang-switch" role="group" aria-label="Language">
+        <button type="button" id="langEs" class="active" aria-pressed="true">Español</button>
+        <button type="button" id="langEn" aria-pressed="false">English</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="support-strip">
+    <div class="wrap support-strip-inner">
+      <span id="supportLabel">Soporte técnico:</span>
+      <a href="mailto:contact@aixensoft.com" rel="noopener noreferrer" id="supportEmailLink">contact@aixensoft.com</a>
+      <button type="button" class="btn-copy" id="btnCopyEmail">Copiar correo</button>
+    </div>
+  </div>
+
+  <main>
+    <section class="hero wrap">
+      <p class="badge" id="heroBadge"></p>
+      <h1 id="heroTitle"></h1>
+      <p class="subtitle" id="heroSubtitle"></p>
+    </section>
+
+    <section class="plans-section wrap" aria-labelledby="plansHeading">
+      <h2 id="plansHeading"></h2>
+      <div class="plans-grid">
+        <article class="plan-card">
+          <h3 class="plan-name" id="plan1Name"></h3>
+          <p class="plan-price">$38.12 <small id="planPerYear1"></small></p>
+          <ul class="plan-features" id="plan1Features"></ul>
+          <button type="button" class="btn-plan" data-select-plan="standard" id="btnPlan1"></button>
+        </article>
+
+        <article class="plan-card featured">
+          <span class="plan-tag" id="plan2Tag"></span>
+          <h3 class="plan-name" id="plan2Name"></h3>
+          <p class="plan-price">$111.79 <small id="planPerYear2"></small></p>
+          <ul class="plan-features" id="plan2Features"></ul>
+          <button type="button" class="btn-plan" data-select-plan="multidomain" id="btnPlan2"></button>
+        </article>
+
+        <article class="plan-card">
+          <h3 class="plan-name" id="plan3Name"></h3>
+          <p class="plan-price">$170.80 <small id="planPerYear3"></small></p>
+          <ul class="plan-features" id="plan3Features"></ul>
+          <button type="button" class="btn-plan" data-select-plan="wildcard" id="btnPlan3"></button>
+        </article>
+      </div>
+    </section>
+
+    <section class="how-section wrap" aria-labelledby="howHeading">
+      <h2 id="howHeading"></h2>
+      <div class="steps-grid">
+        <article class="step-card">
+          <div class="step-num" aria-hidden="true">1</div>
+          <h3 id="step1Title"></h3>
+          <p id="step1Text"></p>
+        </article>
+        <article class="step-card">
+          <div class="step-num" aria-hidden="true">2</div>
+          <h3 id="step2Title"></h3>
+          <p id="step2Text"></p>
+        </article>
+        <article class="step-card">
+          <div class="step-num" aria-hidden="true">3</div>
+          <h3 id="step3Title"></h3>
+          <p id="step3Text"></p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <p><span id="footerHosted">ssl.aixensoft.com</span> · <span class="domain">Aixensoft</span></p>
+      <p id="footerRights"></p>
+      <div class="footer-links">
+        <a href="https://checkin.aixensoft.com" rel="noopener noreferrer" id="footerPayLink">Aixensoft Pay</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal-backdrop" id="modalBackdrop" role="presentation" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-head">
+        <div>
+          <h2 id="modalTitle"></h2>
+          <p class="modal-plan-label" id="modalPlanLabel"></p>
+        </div>
+        <button type="button" class="btn-close" id="modalClose" aria-label="Cerrar">×</button>
+      </div>
+
+      <form id="orderForm" novalidate>
+        <div class="field">
+          <label for="email" id="labelEmail"></label>
+          <input type="email" id="email" name="email" required maxlength="254" autocomplete="email" inputmode="email">
+          <div class="field-error" id="errEmail" role="alert"></div>
+        </div>
+
+        <div class="field">
+          <label for="domains" id="labelDomains"></label>
+          <input type="text" id="domains" name="domains" required maxlength="512" autocomplete="off" spellcheck="false">
+          <p class="field-hint" id="domainsHelp"></p>
+          <div class="field-error" id="errDomains" role="alert"></div>
+        </div>
+
+        <div class="field">
+          <label for="serverType" id="labelServer"></label>
+          <select id="serverType" name="serverType">
+            <option value="" id="optServerDefault"></option>
+            <option value="iis" id="optServerIis"></option>
+            <option value="nginx" id="optServerNginx"></option>
+            <option value="apache" id="optServerApache"></option>
+            <option value="cpanel" id="optServerCpanel"></option>
+            <option value="exchange" id="optServerExchange"></option>
+            <option value="other" id="optServerOther"></option>
+          </select>
+        </div>
+
+        <div class="hp-field" aria-hidden="true">
+          <label for="website">Website</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn-pay" id="btnPay"></button>
+          <a class="btn-mailto" id="btnMailtoConfirm" href="mailto:contact@aixensoft.com" rel="noopener noreferrer"></a>
+        </div>
+
+        <div id="modalStatus" class="modal-status error" role="status"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    var PAYMENT_LINKS = {
+      standard: "https://checkin.aixensoft.com",
+      multidomain: "https://checkin.aixensoft.com",
+      wildcard: "https://checkin.aixensoft.com"
+    };
+  </script>
+  <script>
+    var DOMAIN_REGEX = /^(?:\*\.)?(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,24}$/;
+    var EMAIL_REGEX = /^(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$/;
+    var CHECKOUT_PREFIX_REGEX = /^https:\/\/checkin\.aixensoft\.com(?:\/|$|\?|#)/;
+    var SUPPORT_EMAIL = "contact@aixensoft.com";
+    var PAY_COOLDOWN_MS = 5000;
+
+    var PLAN_KEYS = {
+      standard: "standard",
+      multidomain: "multidomain",
+      wildcard: "wildcard"
+    };
+
+    var I18N = {
+      es: {
+        supportLabel: "Soporte técnico:",
+        copyEmail: "Copiar correo",
+        copyOk: "Correo copiado",
+        copyFail: "No se pudo copiar; usa el enlace de correo",
+        heroBadge: "Entrega garantizada por email en menos de 6 horas · Cobertura 365 días",
+        heroTitle: "Certificados SSL/TLS de Grado Empresarial para Servidores y Web",
+        heroSubtitle: "Cifrado fuerte compatible con Windows Server 2012–2025 / IIS, MailEnable / Exchange, Linux / Nginx / Apache y cPanel. Pago único en USD con Tarjeta (Visa/Mastercard) o Cripto (USDC/USDT).",
+        plansHeading: "Planes y precios",
+        planPerYear: "USD / año",
+        plan1Name: "SSL Standard",
+        plan1Features: [
+          "1 dominio: tudominio.com + www",
+          "RSA 2048 / ECDSA — .crt, .key, .ca-bundle, .pfx",
+          "Reemisión gratuita (normativa 200 días)",
+          "Entrega por email en < 6 horas"
+        ],
+        btnPlan1: "Comprar Standard",
+        plan2Tag: "Ideal Servidores",
+        plan2Name: "SSL Multidominio (SAN)",
+        plan2Features: [
+          "Hasta 5 dominios en un solo certificado",
+          "Optimizado MailEnable / Exchange y múltiples webs",
+          "Archivos Windows y Linux",
+          "Soporte prioritario por email"
+        ],
+        btnPlan2: "Comprar Multidominio",
+        plan3Name: "SSL Wildcard (*.dominio)",
+        plan3Features: [
+          "Raíz + *.tudominio.com ilimitados",
+          "Ideal SaaS e infraestructura escalable",
+          "Compatible con todos los navegadores y servidores",
+          "Entrega por email en < 6 horas"
+        ],
+        btnPlan3: "Comprar Wildcard",
+        howHeading: "Cómo funciona",
+        step1Title: "Elige plan y dominio",
+        step1Text: "Selecciona el certificado, indica el correo de entrega y los dominios a proteger.",
+        step2Title: "Pago seguro en Aixensoft Pay",
+        step2Text: "Paga con TDC/Débito o Cripto (USDC/USDT) en la pasarela, sin registro obligatorio.",
+        step3Title: "Recepción por email",
+        step3Text: "Recibe los archivos del certificado en tu bandeja en menos de 6 horas.",
+        footerRights: "© Aixensoft. Certificados SSL/TLS para infraestructura empresarial.",
+        footerPayLink: "Aixensoft Pay",
+        modalTitle: "Datos del certificado",
+        modalPlanStandard: "Plan: SSL Standard — $38.12/año",
+        modalPlanMultidomain: "Plan: SSL Multidominio (SAN) — $111.79/año",
+        modalPlanWildcard: "Plan: SSL Wildcard — $170.80/año",
+        labelEmail: "Correo de entrega del certificado",
+        labelDomains: "Dominio(s) a certificar",
+        domainsHelp: "Standard: un dominio. Multidominio: 2–5 separados por coma. Wildcard: *.tudominio.com",
+        labelServer: "Tipo de servidor (opcional)",
+        optServerDefault: "— Seleccionar —",
+        optServerIis: "Windows / IIS",
+        optServerNginx: "Linux / Nginx",
+        optServerApache: "Linux / Apache",
+        optServerCpanel: "cPanel",
+        optServerExchange: "MailEnable / Exchange",
+        optServerOther: "Otro",
+        btnPay: "Continuar a Aixensoft Pay",
+        btnPayWait: "Espera {s}s…",
+        btnMailto: "Confirmar por correo con soporte",
+        errEmail: "Introduce un correo válido.",
+        errDomainChars: "Dominio con caracteres no permitidos.",
+        errDomainFormat: "Formato de dominio inválido.",
+        errStandardOne: "Standard admite exactamente 1 dominio (sin wildcard).",
+        errSanCount: "Multidominio requiere entre 2 y 5 dominios separados por coma.",
+        errWildcardFmt: "Wildcard debe ser *.tudominio.com",
+        errPayLink: "Enlace de pago no permitido. Contacta a soporte.",
+        modalClose: "Cerrar",
+        mailtoSubject: "Pedido SSL Aixensoft — confirmación de dominio",
+        mailtoIntro: "Hola, deseo confirmar este pedido SSL:",
+        mailFieldPlan: "Plan",
+        mailFieldEmail: "Email",
+        mailFieldDomains: "Dominios",
+        mailFieldServer: "Servidor"
+      },
+      en: {
+        supportLabel: "Technical support:",
+        copyEmail: "Copy email",
+        copyOk: "Email copied",
+        copyFail: "Could not copy; use the mail link",
+        heroBadge: "Guaranteed email delivery in under 6 hours · 365-day coverage",
+        heroTitle: "Enterprise-Grade SSL/TLS Certificates for Servers and Web",
+        heroSubtitle: "Strong encryption compatible with Windows Server 2012–2025 / IIS, MailEnable / Exchange, Linux / Nginx / Apache, and cPanel. One-time USD payment via Card (Visa/Mastercard) or Crypto (USDC/USDT).",
+        plansHeading: "Plans & pricing",
+        planPerYear: "USD / year",
+        plan1Name: "SSL Standard",
+        plan1Features: [
+          "1 domain: yourdomain.com + www",
+          "RSA 2048 / ECDSA — .crt, .key, .ca-bundle, .pfx",
+          "Free reissue (200-day policy)",
+          "Email delivery in < 6 hours"
+        ],
+        btnPlan1: "Buy Standard",
+        plan2Tag: "Ideal for Servers",
+        plan2Name: "SSL Multi-Domain (SAN)",
+        plan2Features: [
+          "Up to 5 domains on one certificate",
+          "Optimized for MailEnable / Exchange and multiple sites",
+          "Windows and Linux file bundles",
+          "Priority email support"
+        ],
+        btnPlan2: "Buy Multi-Domain",
+        plan3Name: "SSL Wildcard (*.domain)",
+        plan3Features: [
+          "Root + unlimited *.yourdomain.com",
+          "Ideal for SaaS and scalable infrastructure",
+          "Compatible with all major browsers and servers",
+          "Email delivery in < 6 hours"
+        ],
+        btnPlan3: "Buy Wildcard",
+        howHeading: "How it works",
+        step1Title: "Choose plan & domain",
+        step1Text: "Pick your certificate, delivery email, and domains to secure.",
+        step2Title: "Secure payment via Aixensoft Pay",
+        step2Text: "Pay with credit/debit card or crypto (USDC/USDT) — no signup required.",
+        step3Title: "Receive by email",
+        step3Text: "Get certificate files in your inbox in under 6 hours.",
+        footerRights: "© Aixensoft. SSL/TLS certificates for enterprise infrastructure.",
+        footerPayLink: "Aixensoft Pay",
+        modalTitle: "Certificate details",
+        modalPlanStandard: "Plan: SSL Standard — $38.12/year",
+        modalPlanMultidomain: "Plan: SSL Multi-Domain (SAN) — $111.79/year",
+        modalPlanWildcard: "Plan: SSL Wildcard — $170.80/year",
+        labelEmail: "Certificate delivery email",
+        labelDomains: "Domain(s) to certify",
+        domainsHelp: "Standard: one domain. Multi-domain: 2–5 comma-separated. Wildcard: *.yourdomain.com",
+        labelServer: "Server type (optional)",
+        optServerDefault: "— Select —",
+        optServerIis: "Windows / IIS",
+        optServerNginx: "Linux / Nginx",
+        optServerApache: "Linux / Apache",
+        optServerCpanel: "cPanel",
+        optServerExchange: "MailEnable / Exchange",
+        optServerOther: "Other",
+        btnPay: "Continue to Aixensoft Pay",
+        btnPayWait: "Wait {s}s…",
+        btnMailto: "Confirm details by email with support",
+        errEmail: "Enter a valid email address.",
+        errDomainChars: "Domain contains disallowed characters.",
+        errDomainFormat: "Invalid domain format.",
+        errStandardOne: "Standard allows exactly 1 domain (no wildcard).",
+        errSanCount: "Multi-domain requires 2–5 comma-separated domains.",
+        errWildcardFmt: "Wildcard must be *.yourdomain.com",
+        errPayLink: "Payment link is not allowed. Please contact support.",
+        modalClose: "Close",
+        mailtoSubject: "Aixensoft SSL order — domain confirmation",
+        mailtoIntro: "Hello, I would like to confirm this SSL order:",
+        mailFieldPlan: "Plan",
+        mailFieldEmail: "Email",
+        mailFieldDomains: "Domains",
+        mailFieldServer: "Server"
+      }
+    };
+
+    var currentLang = "es";
+    var selectedPlan = null;
+    var payLockedUntil = 0;
+    var payCooldownTimer = null;
+
+    function t(key) {
+      var pack = I18N[currentLang];
+      return (pack && pack[key]) || I18N.es[key] || key;
+    }
+
+    function setText(id, text) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = text;
+    }
+
+    function renderFeatureList(id, items) {
+      var ul = document.getElementById(id);
+      if (!ul) return;
+      while (ul.firstChild) ul.removeChild(ul.firstChild);
+      items.forEach(function (item) {
+        var li = document.createElement("li");
+        li.textContent = item;
+        ul.appendChild(li);
+      });
+    }
+
+    function applyLanguage(lang) {
+      currentLang = lang === "en" ? "en" : "es";
+      document.documentElement.lang = currentLang;
+
+      var pack = I18N[currentLang];
+      setText("supportLabel", pack.supportLabel);
+      setText("btnCopyEmail", pack.copyEmail);
+      setText("heroBadge", pack.heroBadge);
+      setText("heroTitle", pack.heroTitle);
+      setText("heroSubtitle", pack.heroSubtitle);
+      setText("plansHeading", pack.plansHeading);
+      setText("planPerYear1", pack.planPerYear);
+      setText("planPerYear2", pack.planPerYear);
+      setText("planPerYear3", pack.planPerYear);
+      setText("plan1Name", pack.plan1Name);
+      renderFeatureList("plan1Features", pack.plan1Features);
+      setText("btnPlan1", pack.btnPlan1);
+      setText("plan2Tag", pack.plan2Tag);
+      setText("plan2Name", pack.plan2Name);
+      renderFeatureList("plan2Features", pack.plan2Features);
+      setText("btnPlan2", pack.btnPlan2);
+      setText("plan3Name", pack.plan3Name);
+      renderFeatureList("plan3Features", pack.plan3Features);
+      setText("btnPlan3", pack.btnPlan3);
+      setText("howHeading", pack.howHeading);
+      setText("step1Title", pack.step1Title);
+      setText("step1Text", pack.step1Text);
+      setText("step2Title", pack.step2Title);
+      setText("step2Text", pack.step2Text);
+      setText("step3Title", pack.step3Title);
+      setText("step3Text", pack.step3Text);
+      setText("footerRights", pack.footerRights);
+      setText("footerPayLink", pack.footerPayLink);
+      setText("modalTitle", pack.modalTitle);
+      setText("labelEmail", pack.labelEmail);
+      setText("labelDomains", pack.labelDomains);
+      setText("domainsHelp", pack.domainsHelp);
+      setText("labelServer", pack.labelServer);
+      setText("optServerDefault", pack.optServerDefault);
+      setText("optServerIis", pack.optServerIis);
+      setText("optServerNginx", pack.optServerNginx);
+      setText("optServerApache", pack.optServerApache);
+      setText("optServerCpanel", pack.optServerCpanel);
+      setText("optServerExchange", pack.optServerExchange);
+      setText("optServerOther", pack.optServerOther);
+      setText("btnMailtoConfirm", pack.btnMailto);
+      if (Date.now() >= payLockedUntil) setText("btnPay", pack.btnPay);
+      document.getElementById("modalClose").setAttribute("aria-label", pack.modalClose);
+
+      document.getElementById("langEs").classList.toggle("active", currentLang === "es");
+      document.getElementById("langEn").classList.toggle("active", currentLang === "en");
+      document.getElementById("langEs").setAttribute("aria-pressed", currentLang === "es" ? "true" : "false");
+      document.getElementById("langEn").setAttribute("aria-pressed", currentLang === "en" ? "true" : "false");
+
+      if (selectedPlan) updateModalPlanLabel();
+
+      var domainsInput = document.getElementById("domains");
+      if (domainsInput) domainsInput.placeholder = currentLang === "en" ? "example.com" : "ejemplo.com";
+
+      updateMailtoHref();
+    }
+
+    function planLabelKey(plan) {
+      if (plan === "standard") return "modalPlanStandard";
+      if (plan === "multidomain") return "modalPlanMultidomain";
+      if (plan === "wildcard") return "modalPlanWildcard";
+      return "modalPlanStandard";
+    }
+
+    function updateModalPlanLabel() {
+      if (!selectedPlan) return;
+      setText("modalPlanLabel", t(planLabelKey(selectedPlan)));
+    }
+
+    function hasDangerousDomainInput(raw) {
+      if (!raw) return true;
+      var lower = raw.toLowerCase();
+      if (/[\s;|&$`<>]/.test(raw)) return true;
+      if (lower.indexOf("http://") !== -1 || lower.indexOf("https://") !== -1) return true;
+      if (raw.indexOf("/") !== -1 || raw.indexOf("\\") !== -1) return true;
+      return false;
+    }
+
+    function parseDomainsInput(raw) {
+      return raw.split(",").map(function (s) { return s.trim(); }).filter(Boolean);
+    }
+
+    function validateEmail(email) {
+      if (!email || email.length > 254) return false;
+      return EMAIL_REGEX.test(email);
+    }
+
+    function validateSingleDomain(domain) {
+      if (hasDangerousDomainInput(domain)) return { ok: false, code: "errDomainChars" };
+      if (!DOMAIN_REGEX.test(domain)) return { ok: false, code: "errDomainFormat" };
+      return { ok: true };
+    }
+
+    function validateByPlan(plan, domainsRaw) {
+      var list = parseDomainsInput(domainsRaw);
+      if (!list.length) return { ok: false, code: "errDomainFormat" };
+
+      for (var i = 0; i < list.length; i++) {
+        var check = validateSingleDomain(list[i]);
+        if (!check.ok) return check;
+      }
+
+      if (plan === "standard") {
+        if (list.length !== 1 || list[0].indexOf("*.") === 0) return { ok: false, code: "errStandardOne" };
+      } else if (plan === "multidomain") {
+        if (list.length < 2 || list.length > 5) return { ok: false, code: "errSanCount" };
+        for (var j = 0; j < list.length; j++) {
+          if (list[j].indexOf("*.") === 0) return { ok: false, code: "errDomainFormat" };
+        }
+      } else if (plan === "wildcard") {
+        if (list.length !== 1 || list[0].indexOf("*.") !== 0) return { ok: false, code: "errWildcardFmt" };
+      }
+
+      return { ok: true, domains: list };
+    }
+
+    function getValidatedPaymentUrl(plan) {
+      var url = PAYMENT_LINKS[plan];
+      if (typeof url !== "string" || !CHECKOUT_PREFIX_REGEX.test(url)) return null;
+      return url;
+    }
+
+    function collectOrderFields() {
+      return {
+        email: document.getElementById("email").value.trim(),
+        domainsRaw: document.getElementById("domains").value.trim(),
+        serverType: document.getElementById("serverType").value
+      };
+    }
+
+    function buildMailtoHref(plan, email, domainsList, serverType) {
+      var lines = [
+        t("mailtoIntro"),
+        "",
+        t("mailFieldPlan") + ": " + plan,
+        t("mailFieldEmail") + ": " + email,
+        t("mailFieldDomains") + ": " + domainsList.join(", ")
+      ];
+      if (serverType) lines.push(t("mailFieldServer") + ": " + serverType);
+      var subject = encodeURIComponent(t("mailtoSubject"));
+      var body = encodeURIComponent(lines.join("\n"));
+      return "mailto:" + SUPPORT_EMAIL + "?subject=" + subject + "&body=" + body;
+    }
+
+    function updateMailtoHref() {
+      var link = document.getElementById("btnMailtoConfirm");
+      if (!selectedPlan) {
+        link.setAttribute("href", "mailto:" + SUPPORT_EMAIL);
+        return;
+      }
+      var fields = collectOrderFields();
+      var domainCheck = validateByPlan(selectedPlan, fields.domainsRaw);
+      var domainsList = domainCheck.ok ? domainCheck.domains : [];
+      if (!validateEmail(fields.email) || !domainCheck.ok) {
+        link.setAttribute("href", "mailto:" + SUPPORT_EMAIL);
+        return;
+      }
+      link.setAttribute("href", buildMailtoHref(selectedPlan, fields.email, domainsList, fields.serverType));
+    }
+
+    function clearFieldErrors() {
+      setText("errEmail", "");
+      setText("errDomains", "");
+      hideModalStatus();
+    }
+
+    function hideModalStatus() {
+      var box = document.getElementById("modalStatus");
+      box.className = "modal-status error";
+      box.textContent = "";
+    }
+
+    function showModalStatus(message) {
+      var box = document.getElementById("modalStatus");
+      box.className = "modal-status error visible";
+      box.textContent = message;
+    }
+
+    function openModal(plan) {
+      selectedPlan = plan;
+      updateModalPlanLabel();
+      clearFieldErrors();
+      document.getElementById("email").value = "";
+      document.getElementById("domains").value = "";
+      document.getElementById("serverType").value = "";
+      updateMailtoHref();
+
+      var backdrop = document.getElementById("modalBackdrop");
+      backdrop.classList.add("open");
+      backdrop.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+      document.getElementById("email").focus();
+    }
+
+    function closeModal() {
+      var backdrop = document.getElementById("modalBackdrop");
+      backdrop.classList.remove("open");
+      backdrop.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+    }
+
+    function startPayCooldown() {
+      payLockedUntil = Date.now() + PAY_COOLDOWN_MS;
+      var btn = document.getElementById("btnPay");
+      btn.disabled = true;
+
+      if (payCooldownTimer) clearInterval(payCooldownTimer);
+      payCooldownTimer = setInterval(function () {
+        var left = Math.ceil((payLockedUntil - Date.now()) / 1000);
+        if (left > 0) {
+          setText("btnPay", t("btnPayWait").replace("{s}", String(left)));
+        } else {
+          clearInterval(payCooldownTimer);
+          payCooldownTimer = null;
+          btn.disabled = false;
+          setText("btnPay", t("btnPay"));
+        }
+      }, 250);
+    }
+
+    function validateForm() {
+      clearFieldErrors();
+      var fields = collectOrderFields();
+
+      if (!validateEmail(fields.email)) {
+        setText("errEmail", t("errEmail"));
+        return null;
+      }
+
+      var domainCheck = validateByPlan(selectedPlan, fields.domainsRaw);
+      if (!domainCheck.ok) {
+        setText("errDomains", t(domainCheck.code));
+        return null;
+      }
+
+      return {
+        email: fields.email,
+        domains: domainCheck.domains,
+        serverType: fields.serverType
+      };
+    }
+
+    document.getElementById("langEs").addEventListener("click", function () { applyLanguage("es"); });
+    document.getElementById("langEn").addEventListener("click", function () { applyLanguage("en"); });
+
+    document.getElementById("btnCopyEmail").addEventListener("click", function () {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(SUPPORT_EMAIL).then(function () {
+          var btn = document.getElementById("btnCopyEmail");
+          var prev = btn.textContent;
+          btn.textContent = t("copyOk");
+          setTimeout(function () { btn.textContent = prev; }, 2000);
+        }).catch(function () { window.alert(t("copyFail")); });
+      } else {
+        window.alert(t("copyFail"));
+      }
+    });
+
+    document.querySelectorAll("[data-select-plan]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var plan = btn.getAttribute("data-select-plan");
+        openModal(plan);
+      });
+    });
+
+    document.getElementById("modalClose").addEventListener("click", closeModal);
+    document.getElementById("modalBackdrop").addEventListener("click", function (ev) {
+      if (ev.target === document.getElementById("modalBackdrop")) closeModal();
+    });
+
+    document.addEventListener("keydown", function (ev) {
+      if (ev.key === "Escape") closeModal();
+    });
+
+    ["email", "domains", "serverType"].forEach(function (id) {
+      document.getElementById(id).addEventListener("input", updateMailtoHref);
+      document.getElementById(id).addEventListener("change", updateMailtoHref);
+    });
+
+    document.getElementById("btnMailtoConfirm").addEventListener("click", function (ev) {
+      var validated = validateForm();
+      if (!validated) {
+        ev.preventDefault();
+        return;
+      }
+      this.setAttribute("href", buildMailtoHref(selectedPlan, validated.email, validated.domains, validated.serverType));
+    });
+
+    document.getElementById("orderForm").addEventListener("submit", function (ev) {
+      ev.preventDefault();
+
+      var hp = document.getElementById("website");
+      if (hp && hp.value.trim() !== "") return;
+
+      if (Date.now() < payLockedUntil) return;
+
+      var validated = validateForm();
+      if (!validated) return;
+
+      var paymentUrl = getValidatedPaymentUrl(selectedPlan);
+      if (!paymentUrl) {
+        showModalStatus(t("errPayLink"));
+        return;
+      }
+
+      startPayCooldown();
+      window.location.assign(paymentUrl);
+    });
+
+    applyLanguage("es");
+  </script>
+</body>
+</html>
